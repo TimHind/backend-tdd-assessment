@@ -91,7 +91,19 @@ class TestEcho(unittest.TestCase):
     #
     # Students: add more parser tests here
     #
-
+    def test_help(self):
+        "Check if usage output is as expected"
+        args =["-h"]
+        process = subprocess.Popen(
+            ["python", "./echo.py", "-h"],
+            stdout=subprocess.PIPE)
+        stdout, _ = process.communicate()
+        # stdout, stderr = run_capture(self.module.__file__, args)
+        with open ('USAGE') as f:
+            usage = f.read()
+        self.assertEqual(stdout.decode(), usage)
+    
+    
     def test_echo(self):
         """Check if main() function prints anything at all"""
         stdout, stderr = run_capture(self.module.__file__)
@@ -113,11 +125,67 @@ class TestEcho(unittest.TestCase):
             self.module.main(args)
         assert output, "The program did not print anything."
         self.assertEqual(output[0], "hello world")
+    
+    def test_lower_long(self):
+        """Check if short option '-l' performs lowercasing"""
+        args = ["--lower", "HELLO WORLD"]
+        with Capturing() as output:
+            self.module.main(args)
+        assert output, "The program did not print anything."
+        self.assertEqual(output[0], "hello world")
+    
+    def test_upper_short(self):
+        """Check if short option '-u' performs uppercasing"""
+        args = ["-u", "hello world"]
+        with Capturing() as output:
+            self.module.main(args)
+        assert output, "The program did not print anything."
+        self.assertEqual(output[0], "HELLO WORLD")
+
+    def test_upper_long(self):
+        """Check if short option '-u' performs uppercasing"""
+        args = ["--upper", "hello world"]
+        with Capturing() as output:
+            self.module.main(args)
+        assert output, "The program did not print anything."
+        self.assertEqual(output[0], "HELLO WORLD")
+
+    def test_title_short(self):
+        """Check if short option '-u' performs uppercasing"""
+        args = ["-t", "hello world"]
+        with Capturing() as output:
+            self.module.main(args)
+        assert output, "The program did not print anything."
+        self.assertEqual(output[0], "Hello World")
+
+    def test_title_long(self):
+        """Check if short option '-u' performs uppercasing"""
+        args = ["--title", "hello world"]
+        with Capturing() as output:
+            self.module.main(args)
+        assert output, "The program did not print anything."
+        self.assertEqual(output[0], "Hello World")
+
+
+    def test_no_options(self):
+        args = ["hello world"]
+        with Capturing() as output:
+            self.module.main(args)
+        assert output, "The program did not print anything."
+        self.assertEqual(output[0], "hello world")
+
+    def test_all_options(self):
+        args = ["-tul", "hElLo wORlD"]
+        with Capturing() as output:
+            self.module.main(args)
+        assert output, "The program did not print anything."
+        self.assertEqual(output[0], "Hello World")
+
 
     #
     # Students: add more cmd line options tests here.
     #
-
-
+    
+  
 if __name__ == '__main__':
     unittest.main()
